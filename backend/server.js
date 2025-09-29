@@ -6,6 +6,8 @@ import { register, login } from './controllers/authController.js'
 import { getGames, getGameById, createGame, updateGame, deleteGame, rateGame } from './controllers/gameController.js'
 import { auth } from './middleware/authMiddleware.js'
 import Game from './models/Game.js'
+import User from './models/User.js'
+import Order from './models/Order.js'
 
 dotenv.config()
 const app = express()
@@ -45,15 +47,150 @@ app.post('/api/games/:id/rate', auth, rateGame)
 app.post('/api/developers/upload', auth, createGame)
 app.get('/api/developers/mygames', auth, async (req, res) => {
   try {
-    console.log("My Games route - Developer:", req.developer) // Debug log
+    console.log("My Games route - Developer:", req.developer)
     if (!req.developer) {
       return res.status(403).json({ msg: 'Access denied - developers only' })
     }
     const games = await Game.find({ developerId: req.developer._id })
-    console.log("Found games:", games.length) // Debug log
+    console.log("Found games:", games.length)
     res.json(games)
   } catch (err) {
     console.error("Error fetching developer games:", err)
+    res.status(500).json({ msg: err.message })
+  }
+})
+
+// User Wishlist routes
+app.get('/api/users/wishlist', auth, async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(403).json({ msg: 'Access denied - users only' })
+    }
+    const user = await User.findById(req.user._id).populate('wishlist')
+    res.json(user.wishlist)
+  } catch (err) {
+    res.status(500).json({ msg: err.message })
+  }
+})
+
+app.post('/api/users/wishlist/:gameId', auth, async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(403).json({ msg: 'Access denied - users only' })
+    }
+    const user = await User.findById(req.user._id)
+    if (!user.wishlist.includes(req.params.gameId)) {
+      user.wishlist.push(req.params.gameId)
+      await user.save()
+    }
+    res.json({ msg: 'Added to wishlist' })
+  } catch (err) {
+    res.status(500).json({ msg: err.message })
+  }
+})
+
+app.delete('/api/users/wishlist/:gameId', auth, async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(403).json({ msg: 'Access denied - users only' })
+    }
+    const user = await User.findById(req.user._id)
+    user.wishlist = user.wishlist.filter(id => id.toString() !== req.params.gameId)
+    await user.save()
+    res.json({ msg: 'Removed from wishlist' })
+  } catch (err) {
+    res.status(500).json({ msg: err.message })
+  }
+})
+
+// User Cart routes
+app.get('/api/users/cart', auth, async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(403).json({ msg: 'Access denied - users only' })
+    }
+    const user = await User.findById(req.user._id).populate('cart')
+    res.json(user.cart)
+  } catch (err) {
+    res.status(500).json({ msg: err.message })
+  }
+})
+
+app.post('/api/users/cart/:gameId', auth, async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(403).json({ msg: 'Access denied - users only' })
+    }
+    const user = await User.findById(req.user._id)
+    if (!user.cart.includes(req.params.gameId)) {
+      user.cart.push(req.params.gameId)
+      await user.save()
+    }
+    res.json({ msg: 'Added to cart' })
+  } catch (err) {
+    res.status(500).json({ msg: err.message })
+  }
+})
+
+app.delete('/api/users/cart/:gameId', auth, async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(403).json({ msg: 'Access denied - users only' })
+    }
+    const user = await User.findById(req.user._id)
+    user.cart = user.cart.filter(id => id.toString() !== req.params.gameId)
+    await user.save()
+    res.json({ msg: 'Removed from cart' })
+  } catch (err) {
+    res.status(500).json({ msg: err.message })
+  }
+})
+
+// User Library routes
+app.get('/api/users/library', auth, async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(403).json({ msg: 'Access denied - users only' })
+    }
+    const user = await User.findById(req.user._id).populate('library')
+    res.json(user.library)
+  } catch (err) {
+    res.status(500).json({ msg: err.message })
+  }
+})
+
+// Purchase route (checkout)
+app.post('/api/users/purchase', auth, async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(403).json({ msg: 'Access denied - users only' })
+    }
+    const user = await User.findById(req.user._id).populate('cart')
+    
+    if (user.cart.length === 0) {
+      return res.status(400).json({ msg: 'Cart is empty' })
+    }
+    
+    // Move games from cart to library
+    user.library = [...new Set([...user.library, ...user.cart])]
+    
+    // Calculate total
+    const total = user.cart.reduce((sum, game) => sum + (game.price || 0), 0)
+    
+    // Create order
+    await Order.create({
+      userId: user._id,
+      games: user.cart,
+      totalAmount: total
+    })
+    
+    // Clear cart
+    user.cart = []
+    await user.save()
+    
+    res.json({ msg: 'Purchase successful', totalAmount: total })
+  } catch (err) {
+    console.error("Purchase error:", err)
     res.status(500).json({ msg: err.message })
   }
 })

@@ -5,6 +5,7 @@ import styles from "./RatingStars.module.css"
 
 export default function RatingStars({ rating, onRate }) {
   const [hover, setHover] = useState(0)
+  
   return (
     <div className={styles.stars}>
       {[...Array(5)].map((_, i) => {

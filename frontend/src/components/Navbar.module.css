@@ -21,3 +21,19 @@
 .links a:hover {
   color: #a259ff;
 }
+
+.logoutBtn {
+  margin-left: 1.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #a259ff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.logoutBtn:hover {
+  background-color: #8b44e0;
+}

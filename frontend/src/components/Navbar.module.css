@@ -1,0 +1,23 @@
+/* Path: src/components/Navbar.module.css */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #111;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+.logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #a259ff;
+}
+.links a {
+  margin-left: 1.5rem;
+  font-weight: 500;
+  color: white;
+  transition: color 0.2s;
+}
+.links a:hover {
+  color: #a259ff;
+}

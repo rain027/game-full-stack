@@ -1,0 +1,20 @@
+/* Path: src/components/RatingStars.module.css */
+.stars {
+  display: flex;
+}
+.active {
+  color: gold;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.active:hover {
+  transform: scale(1.2);
+}
+.inactive {
+  color: #555;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.inactive:hover {
+  transform: scale(1.2);
+}

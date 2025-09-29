@@ -1,0 +1,149 @@
+/* Path: src/pages/pages.module.css */
+.title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #a259ff;
+  margin-bottom: 0.5rem;
+}
+.subtitle {
+  font-size: 1.2rem;
+  color: #ccc;
+  margin-bottom: 2rem;
+}
+.sectionTitle {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill,minmax(250px,1fr));
+  gap: 1.5rem;
+}
+
+/* Path: src/pages/pages.module.css (append at bottom) */
+.gameDetails {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #222;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+.gameImage {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+.gameTitle {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #a259ff;
+  margin-bottom: 0.5rem;
+}
+.gameDesc {
+  color: #ccc;
+  margin-bottom: 1rem;
+}
+.gamePrice {
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.buttons button {
+  margin-right: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+.primary {
+  background-color: #a259ff;
+  color: white;
+}
+.primary:hover {
+  background-color: #8b44e0;
+}
+.secondary {
+  background-color: #444;
+  color: white;
+}
+.secondary:hover {
+  background-color: #555;
+}
+
+/* Path: src/pages/pages.module.css (append) */
+.cartGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.cartItem {
+  background-color: #222;
+  padding: 1rem;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Path: src/pages/pages.module.css (append at bottom) */
+.formContainer {
+  max-width: 500px;
+  margin: 0 auto;
+  background-color: #222;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+.form {
+  display: flex;
+  flex-direction: column;
+}
+.form label {
+  margin: 0.5rem 0 0.2rem;
+}
+.form input {
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: none;
+  margin-bottom: 1rem;
+  background-color: #333;
+  color: white;
+}
+.form button {
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  border: none;
+  background-color: #a259ff;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+.form button:hover {
+  background-color: #8b44e0;
+}
+
+/* Path: src/pages/pages.module.css (append at bottom) */
+.table {
+  background-color: #222;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 2rem;
+}
+.tableRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #333;
+}
+.tableRow:last-child {
+  border-bottom: none;
+}

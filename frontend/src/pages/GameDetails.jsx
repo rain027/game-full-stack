@@ -10,12 +10,26 @@ export default function GameDetails() {
   const [inCart, setInCart] = useState(false)
   const [inLibrary, setInLibrary] = useState(false)
   const [userRating, setUserRating] = useState(0)
+  const [userRole, setUserRole] = useState(null)
   const token = localStorage.getItem("token")
 
   useEffect(() => {
     fetchGame()
+    
+    // Get user role from token
     if (token) {
-      checkUserCollections()
+      try {
+        const payload = token.split('.')[1]
+        const decoded = JSON.parse(atob(payload))
+        setUserRole(decoded.role)
+        
+        // Only check collections for regular users
+        if (decoded.role === 'user') {
+          checkUserCollections()
+        }
+      } catch (err) {
+        console.error("Error decoding token:", err)
+      }
     }
   }, [gameId, token])
 
@@ -149,7 +163,7 @@ export default function GameDetails() {
       </div>
 
       {/* Rating Section - Only if user owns the game */}
-      {inLibrary && (
+      {userRole === 'user' && inLibrary && (
         <div style={{ 
           backgroundColor: '#222', 
           padding: '1rem', 
@@ -166,94 +180,103 @@ export default function GameDetails() {
         </div>
       )}
       
-      <div style={{ marginTop: '2rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-        {inLibrary ? (
-          <button 
-            style={{ 
-              padding: '0.75rem 1.5rem', 
-              backgroundColor: '#4CAF50', 
-              color: 'white', 
-              border: 'none', 
-              borderRadius: '6px',
-              cursor: 'not-allowed',
-              fontWeight: 'bold'
-            }}
-            disabled
-          >
-            ✓ In Library
-          </button>
-        ) : (
-          <>
-            {!inCart ? (
-              <button 
-                onClick={addToCart}
-                style={{ 
-                  padding: '0.75rem 1.5rem', 
-                  backgroundColor: '#a259ff', 
-                  color: 'white', 
-                  border: 'none', 
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontWeight: 'bold'
-                }}
-              >
-                🛒 Add to Cart
-              </button>
-            ) : (
-              <button 
-                style={{ 
-                  padding: '0.75rem 1.5rem', 
-                  backgroundColor: '#666', 
-                  color: 'white', 
-                  border: 'none', 
-                  borderRadius: '6px',
-                  cursor: 'not-allowed',
-                  fontWeight: 'bold'
-                }}
-                disabled
-              >
-                ✓ In Cart
-              </button>
-            )}
-            
-            {!inWishlist ? (
-              <button 
-                onClick={addToWishlist}
-                style={{ 
-                  padding: '0.75rem 1.5rem', 
-                  backgroundColor: '#444', 
-                  color: 'white', 
-                  border: 'none', 
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontWeight: 'bold'
-                }}
-              >
-                ♡ Add to Wishlist
-              </button>
-            ) : (
-              <button 
-                style={{ 
-                  padding: '0.75rem 1.5rem', 
-                  backgroundColor: '#666', 
-                  color: 'white', 
-                  border: 'none', 
-                  borderRadius: '6px',
-                  cursor: 'not-allowed',
-                  fontWeight: 'bold'
-                }}
-                disabled
-              >
-                ♥ In Wishlist
-              </button>
-            )}
-          </>
-        )}
-      </div>
+      {/* Only show purchase/wishlist/cart buttons for regular users */}
+      {userRole === 'user' && (
+        <div style={{ marginTop: '2rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+          {inLibrary ? (
+            <button 
+              style={{ 
+                padding: '0.75rem 1.5rem', 
+                backgroundColor: '#4CAF50', 
+                color: 'white', 
+                border: 'none', 
+                borderRadius: '6px',
+                cursor: 'not-allowed',
+                fontWeight: 'bold'
+              }}
+              disabled
+            >
+              ✓ In Library
+            </button>
+          ) : (
+            <>
+              {!inCart ? (
+                <button 
+                  onClick={addToCart}
+                  style={{ 
+                    padding: '0.75rem 1.5rem', 
+                    backgroundColor: '#a259ff', 
+                    color: 'white', 
+                    border: 'none', 
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  🛒 Add to Cart
+                </button>
+              ) : (
+                <button 
+                  style={{ 
+                    padding: '0.75rem 1.5rem', 
+                    backgroundColor: '#666', 
+                    color: 'white', 
+                    border: 'none', 
+                    borderRadius: '6px',
+                    cursor: 'not-allowed',
+                    fontWeight: 'bold'
+                  }}
+                  disabled
+                >
+                  ✓ In Cart
+                </button>
+              )}
+              
+              {!inWishlist ? (
+                <button 
+                  onClick={addToWishlist}
+                  style={{ 
+                    padding: '0.75rem 1.5rem', 
+                    backgroundColor: '#444', 
+                    color: 'white', 
+                    border: 'none', 
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  ♡ Add to Wishlist
+                </button>
+              ) : (
+                <button 
+                  style={{ 
+                    padding: '0.75rem 1.5rem', 
+                    backgroundColor: '#666', 
+                    color: 'white', 
+                    border: 'none', 
+                    borderRadius: '6px',
+                    cursor: 'not-allowed',
+                    fontWeight: 'bold'
+                  }}
+                  disabled
+                >
+                  ♥ In Wishlist
+                </button>
+              )}
+            </>
+          )}
+        </div>
+      )}
 
-      {!inLibrary && (
+      {userRole === 'user' && !inLibrary && (
         <p style={{ marginTop: '1rem', color: '#aaa', fontSize: '0.9rem' }}>
           💡 Purchase this game to leave a rating!
+        </p>
+      )}
+
+      {userRole === 'developer' && (
+        <p style={{ marginTop: '1rem', color: '#aaa', fontSize: '0.9rem' }}>
+          👨‍💻 Developer view - Users will see purchase options here
         </p>
       )}
     </div>

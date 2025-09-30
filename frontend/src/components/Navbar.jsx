@@ -16,10 +16,12 @@ export default function Navbar() {
         const payload = token.split('.')[1]
         const decoded = JSON.parse(atob(payload))
         setUserRole(decoded.role)
-        console.log("User role:", decoded.role) // Debug log
+        console.log("User role from token:", decoded.role) // Debug log
       } catch (err) {
         console.error("Error decoding token:", err)
       }
+    } else {
+      setUserRole(null)
     }
   }, [token])
 
@@ -54,7 +56,7 @@ export default function Navbar() {
               </>
             )}
             
-            {/* Admin link - only for demo */}
+            {/* Admin link - for future use */}
             {userRole === 'admin' && (
               <Link to="/admin/dashboard">Admin</Link>
             )}
